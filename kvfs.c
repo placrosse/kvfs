@@ -40,6 +40,14 @@ int kvfs_disk_seek(struct kvfs_disk *disk, uint64_t offset) {
 		return disk->seek(disk->handle, offset);
 }
 
+int kvfs_disk_write(struct kvfs_disk *disk, const void *buf, uint64_t buf_size) {
+
+	if (disk->write == NULL)
+		return KVFS_ENOSYS;
+	else
+		return disk->write(disk->handle, buf, buf_size);
+}
+
 void kvfs_init(struct kvfs *kvfs) {
 	kvfs->disk = NULL;
 }

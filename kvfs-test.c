@@ -23,11 +23,13 @@
 
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 const uint64_t mock_offset = 0x10;
 
 struct mock_disk {
 	uint64_t seek_index;
+	uint64_t write_index;
 	struct kvfs_disk disk;
 };
 
@@ -46,10 +48,27 @@ static int mock_seek(void *handle, uint64_t offset) {
 	return 0;
 }
 
+static int mock_write(void *handle, const void *buf, uint64_t buf_size) {
+
+	struct mock_disk *disk;
+
+	disk = (struct mock_disk *) handle;
+
+	if (disk->write_index == 1) {
+		assert(buf_size == 4);
+		assert(memcmp((const char *) buf, "kvfs", 4) == 0);
+	}
+
+	disk->write_index++;
+
+	return 0;
+}
+
 static void mock_disk_init(struct mock_disk *mock_disk) {
 	kvfs_disk_init(&mock_disk->disk);
 	mock_disk->disk.handle = mock_disk;
 	mock_disk->disk.seek = mock_seek;
+	mock_disk->disk.write = mock_write;
 	mock_disk->seek_index = 0;
 }
 

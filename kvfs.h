@@ -89,6 +89,15 @@ void kvfs_disk_init(struct kvfs_disk *disk);
 
 int kvfs_disk_seek(struct kvfs_disk *disk, uint64_t offset);
 
+/** Writes data to the disk.
+ * @param disk An initialized disk structure.
+ * @param buf The data to write to disk.
+ * @param buf_size The number of bytes to write to disk.
+ * @returns Zero on success, a negative error code on failure.
+ * */
+
+int kvfs_disk_write(struct kvfs_disk *disk, const void *buf, uint64_t buf_size);
+
 #ifdef KVFS_WITH_LIBC
 
 /** A file which behaves like

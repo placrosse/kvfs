@@ -11,16 +11,27 @@ Some highlights of it are:
 
 ### Building
 
-All the standard targets are supported with GNU Make:
+The build system used in KVFS is CMake (although other build systems could easily be ported.)
 
-```bash
-# Build the library.
+Build it like so:
+
+```
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+
+To test the project:
+
+```
+ctest
+```
+
+If CMake generated Makefiles, you can also use standard Makefile targets.
+
+```
 make
-
-# Run the tests.
 make test
-
-# Install the project
-sudo make install PREFIX=/opt/kvfs
-
+sudo make install
 ```

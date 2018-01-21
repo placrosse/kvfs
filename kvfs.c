@@ -48,6 +48,19 @@ int kvfs_disk_write(struct kvfs_disk *disk, const void *buf, uint64_t buf_size) 
 		return disk->write(disk->handle, buf, buf_size);
 }
 
+int kvfs_disk_encode_uint64(struct kvfs_disk *disk, uint64_t n) {
+	unsigned char buf[8];
+	buf[0] = n >> 0x00;
+	buf[1] = n >> 0x08;
+	buf[2] = n >> 0x10;
+	buf[3] = n >> 0x18;
+	buf[4] = n >> 0x20;
+	buf[5] = n >> 0x28;
+	buf[6] = n >> 0x30;
+	buf[7] = n >> 0x38;
+	return kvfs_disk_write(disk, buf, 8);
+}
+
 void kvfs_init(struct kvfs *kvfs) {
 	kvfs->disk = NULL;
 }
@@ -56,14 +69,27 @@ void kvfs_done(struct kvfs *kvfs) {
 	kvfs->disk = NULL;
 }
 
-int kvfs_format(struct kvfs *kvfs) {
+int kvfs_format(struct kvfs *kvfs, uint64_t size) {
 
 	int err;
+	unsigned char buf[8];
 
 	if (kvfs->disk == NULL)
 		return KVFS_EFAULT;
 
 	err = kvfs_disk_seek(kvfs->disk, kvfs->offset);
+	if (err != 0)
+		return err;
+
+	err = kvfs_disk_write(kvfs->disk, "kvfs", 4);
+	if (err != 0)
+		return err;
+
+	err = kvfs_disk_write(kvfs->disk, "\x00\x00\x00\x00", 4);
+	if (err != 0)
+		return err;
+
+	err = kvfs_disk_encode_uint64(kvfs->disk, size);
 	if (err != 0)
 		return err;
 

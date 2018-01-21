@@ -54,9 +54,18 @@ static int mock_write(void *handle, const void *buf, uint64_t buf_size) {
 
 	disk = (struct mock_disk *) handle;
 
-	if (disk->write_index == 1) {
+	if (disk->write_index == 0) {
+		/* signature */
 		assert(buf_size == 4);
-		assert(memcmp((const char *) buf, "kvfs", 4) == 0);
+		assert(memcmp(buf, "kvfs", 4) == 0);
+	} else if (disk->write_index == 1) {
+		/* version */
+		assert(buf_size == 4);
+		assert(memcmp(buf, "\x00\x00\x00\x00", 4) == 0);
+	} else if (disk->write_index == 2) {
+		/* size */
+		assert(buf_size == 8);
+		assert(memcmp(buf, "\xff\xff\xff\xff\x00\x00\x00\x00", 8) == 0);
 	}
 
 	disk->write_index++;
@@ -70,10 +79,12 @@ static void mock_disk_init(struct mock_disk *mock_disk) {
 	mock_disk->disk.seek = mock_seek;
 	mock_disk->disk.write = mock_write;
 	mock_disk->seek_index = 0;
+	mock_disk->write_index = 0;
 }
 
 static void mock_disk_done(struct mock_disk *mock_disk) {
-	assert(mock_disk->seek_index == 0x01);
+	assert(mock_disk->seek_index == 1);
+	assert(mock_disk->write_index == 3);
 }
 
 int main(void) {
@@ -90,7 +101,7 @@ int main(void) {
 
 	kvfs_set_offset(&kvfs, mock_offset);
 
-	err = kvfs_format(&kvfs);
+	err = kvfs_format(&kvfs, 0xffffffff);
 	assert(err == 0);
 
 	kvfs_done(&kvfs);

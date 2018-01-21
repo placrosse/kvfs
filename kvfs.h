@@ -192,13 +192,13 @@ void kvfs_done(struct kvfs *kvfs);
  * function @ref kvfs_set_offset should
  * also be called if the file system does
  * not begin at the start of the disk.
- * @param kvfs An initialized file system
- * structure.
+ * @param kvfs An initialized file system structure.
+ * @param size The number of bytes to reserve for the file system.
  * @returns Zero on success, a negative
  * error code on failure.
  * */
 
-int kvfs_format(struct kvfs *kvfs);
+int kvfs_format(struct kvfs *kvfs, uint64_t size);
 
 /** Verify that the disk assigned to the
  * file system structure is formatted.

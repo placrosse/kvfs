@@ -19,6 +19,8 @@
  * SOFTWARE.
  */
 
+/** @file */
+
 #ifndef KVFS_H
 #define KVFS_H
 
@@ -120,9 +122,29 @@ struct kvfs_fdisk {
 
 void kvfs_fdisk_init(struct kvfs_fdisk *fdisk);
 
+/** Closes a file disk.
+ * @param fdisk An initialized file disk.
+ * */
+
 void kvfs_fdisk_done(struct kvfs_fdisk *fdisk);
 
+/** Open a disk file.
+ * @param fdisk An initialized file disk.
+ * @param path The path of the file containing the disk data.
+ * @param mode The mode to open the file with.
+ * This should be typically be rb+, unless the file doesn't exist.
+ * @returns Zero on success, a negative number on failure.
+ * */
+
 int kvfs_fdisk_open(struct kvfs_fdisk *fdisk, const char *path, const char *mode);
+
+/** Cast a disk file to a regular disk structure.
+ * This is useful for passing a disk structure to
+ * the @ref kvfs_set_disk function.
+ * @param fdisk An initialized file disk structure.
+ * @returns The disk structure for the file disk.
+ * This function never returns a null pointer.
+ * */
 
 struct kvfs_disk *kvfs_fdisk_cast(struct kvfs_fdisk *fdisk);
 
@@ -237,15 +259,57 @@ int kvfs_opendir(struct kvfs *kvfs, const char *path);
 
 int kvfs_close(struct kvfs *kvfs, int fd);
 
+/** Removes a regular file from the file system.
+ * @param kvfs An initialized file system.
+ * @param path The path of the file to delete.
+ * @returns Zero on success, a negative number on failure.
+ * */
+
 int kvfs_rm(struct kvfs *kvfs, const char *path);
+
+/** Removes a directory form the file system.
+ * @param kvfs An initialized file system.
+ * @param path The path of the directory to remove.
+ * @returns Zero on success, a negative number on failure.
+ * */
 
 int kvfs_rmdir(struct kvfs *kvfs, const char *path);
 
-int kvfs_mkdir(struct kvfs *kvfs, const char *path);
+/** Create a directory.
+ * @param kvfs An initialized file system.
+ * @param path The path to the directory.
+ * @param mode The mode to create the directory with.
+ * @returns Zero on success, a negative number on failure.
+ * */
+
+int kvfs_mkdir(struct kvfs *kvfs, const char *path, int mode);
+
+/** Read data from a file.
+ * @param kvfs An initialized file system.
+ * @param fd The file descriptor to read from.
+ * @param buf The buffer to put the data in.
+ * @param buf_size The number of bytes to read.
+ * @returns Zero on success, a negative number on failure.
+ * */
 
 int kvfs_read(struct kvfs *kvfs, int fd, void *buf, uint64_t buf_size);
 
+/** Read a directory entry from a directory.
+ * @param kvfs An initialized file system.
+ * @param fd The file descriptor of the directory.
+ * @param dirent The directory entry structure to put the info into.
+ * @returns Zero on success, a negative number on failure.
+ * */
+
 int kvfs_readdir(struct kvfs *kvfs, int fd, struct kvfs_dirent *dirent);
+
+/** Write to a file.
+ * @param kvfs An initialized file system.
+ * @param fd The file descriptor of the file.
+ * @param buf The buffer containing the data to write.
+ * @param buf_size The number of bytes to write.
+ * @returns Zero on success, a negative number on failure.
+ * */
 
 int kvfs_write(struct kvfs *kvfs, int fd, const void *buf, uint64_t buf_size);
 

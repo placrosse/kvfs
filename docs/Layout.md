@@ -13,10 +13,11 @@ The following table describes the header of the file system, located at the star
 |-------------------------|------|--------|--------------------------------------------------------------------------|
 | Signature               | 4    | 0      | Used for checking for the presence of KVFS. This field should be 'kvfs'. |
 | Version                 | 4    | 4      | The version of the this header layout.                                   |
-| Allocation Table Offset | 8    | 8      | The location on disk where the space allocation table resides.           |
-| Key-Value Table Offset  | 8    | 16     | The location on disk where the key-value table resides.                  |
-| File Descriptor Table   | 8    | 24     | The location of the open file descriptor table.                          |
-| CRC32 Header Checksum   | 4    | 32     | The CRC32 checksum of this header (is zero during calculation.)          |
+| Size                    | 8    | 8      | The number of bytes allocated by this file system.                       |
+| Allocation Table Offset | 8    | 16     | The location on disk where the space allocation table resides.           |
+| Key-Value Table Offset  | 8    | 24     | The location on disk where the key-value table resides.                  |
+| File Descriptor Table   | 8    | 32     | The location of the open file descriptor table.                          |
+| CRC32 Header Checksum   | 4    | 40     | The CRC32 checksum of this header (is zero during calculation.)          |
 
 ### Allocation Table
 
